@@ -56,6 +56,16 @@ public abstract class CrudService<TRepository, TModel, TId> : ICrudService<TMode
         await Repository.UpdateAsync(model, cancellation);
     }
 
+    public virtual async Task UpdateAsync(TId id, TModel model, CancellationToken cancellation = default)
+    {
+        await Repository.UpdateAsync(id, model, cancellation);
+    }
+
+    public virtual async Task DeleteAsync(TModel model, CancellationToken cancellation = default)
+    {
+        await Repository.DeleteAsync(model, cancellation);
+    }
+
     public virtual async Task DeleteAsync(TId id, CancellationToken cancellation = default)
     {
         await Repository.DeleteAsync(id, cancellation);
