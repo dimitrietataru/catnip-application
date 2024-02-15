@@ -27,9 +27,9 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering>
     }
 
     public virtual async Task<int> CountAsync(
-        QueryRequest<TFiltering> request, CancellationToken cancellation = default)
+        TFiltering filter, CancellationToken cancellation = default)
     {
-        int count = await Repository.CountAsync(request, cancellation);
+        int count = await Repository.CountAsync(filter, cancellation);
 
         return count;
     }
