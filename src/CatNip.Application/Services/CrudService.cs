@@ -61,3 +61,44 @@ public abstract class CrudService<TRepository, TModel, TId> : ICrudService<TMode
         await Repository.DeleteAsync(id, cancellation);
     }
 }
+
+public abstract class CrudService<TRepository, TModel> : ICrudService<TModel>
+    where TRepository : ICrudRepository<TModel>
+    where TModel : IModel
+{
+    protected CrudService(TRepository repository)
+    {
+        Repository = repository;
+    }
+
+    protected virtual TRepository Repository { get; init; }
+
+    public virtual async Task<IEnumerable<TModel>> GetAllAsync(CancellationToken cancellation = default)
+    {
+        var result = await Repository.GetAllAsync(cancellation);
+
+        return result;
+    }
+
+    public virtual async Task<int> CountAsync(CancellationToken cancellation = default)
+    {
+        int count = await Repository.CountAsync(cancellation);
+
+        return count;
+    }
+
+    public virtual async Task CreateAsync(TModel model, CancellationToken cancellation = default)
+    {
+        await Repository.CreateAsync(model, cancellation);
+    }
+
+    public virtual async Task UpdateAsync(TModel model, CancellationToken cancellation = default)
+    {
+        await Repository.UpdateAsync(model, cancellation);
+    }
+
+    public virtual async Task DeleteAsync(TModel model, CancellationToken cancellation = default)
+    {
+        await Repository.DeleteAsync(model, cancellation);
+    }
+}
