@@ -11,3 +11,6 @@
 * [catnip-infrastructure](https://github.com/dimitrietataru/catnip-infrastructure)
 * [catnip-presentation](https://github.com/dimitrietataru/catnip-presentation)
 * [csharp-coding-standards](https://github.com/dimitrietataru/csharp-coding-standards)
+
+### License
+CatNip.Application is Copyright © 2023 [Dimitrie Tataru](https://github.com/dimitrietataru) and other contributors under the [MIT license](https://github.com/dimitrietataru/catnip-application/blob/ace/LICENSE).
