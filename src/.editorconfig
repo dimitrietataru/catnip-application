@@ -815,3 +815,6 @@ dotnet_diagnostic.IDE0055.severity = warning
 [*.cs]
 dotnet_diagnostic.CA1005.severity = silent
 dotnet_diagnostic.CA2007.severity = silent
+
+[**[Tt]est{s,}**.cs]
+dotnet_naming_rule.method_async_should_be_ends_with_async.severity = none
