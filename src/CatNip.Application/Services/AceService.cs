@@ -26,6 +26,15 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering>
         return result;
     }
 
+    public virtual async Task<QueryResponse<TModelRoot>> GetAsync<TModelRoot>(
+        QueryRequest<TFiltering> request, CancellationToken cancellation = default)
+        where TModelRoot : IModel<TId>
+    {
+        var result = await Repository.GetAsync<TModelRoot>(request, cancellation);
+
+        return result;
+    }
+
     public virtual async Task<int> CountAsync(
         TFiltering filter, CancellationToken cancellation = default)
     {
