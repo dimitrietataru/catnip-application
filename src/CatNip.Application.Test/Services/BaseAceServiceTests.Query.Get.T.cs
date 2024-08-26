@@ -14,29 +14,32 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
 {
-    public virtual async Task GivenGetFilteredWhenDataExistsThenReturnsData()
+    public virtual async Task GivenGetFilteredWhenDataExistsThenReturnsData<TModelRoot>()
+        where TModelRoot : IModel<TId>
     {
         // Arrange
-        ArrangeGetFilteredOnSuccess();
+        ArrangeGetFilteredOnSuccess<TModelRoot>();
 
         // Act
-        var result = await Service.GetAsync(
+        var result = await Service.GetAsync<TModelRoot>(
             It.IsAny<QueryRequest<TFiltering>>(), It.IsAny<CancellationToken>());
 
         // Assert
         AssertGetFilteredOnSuccess(result);
     }
 
-    protected virtual void ArrangeGetFilteredOnSuccess()
+    protected virtual void ArrangeGetFilteredOnSuccess<TModelRoot>()
+        where TModelRoot : IModel<TId>
     {
         RepositoryMock
-            .Setup(_ => _.GetAsync(
+            .Setup(_ => _.GetAsync<TModelRoot>(
                 It.IsAny<QueryRequest<TFiltering>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(It.IsAny<QueryResponse<TModel>>())
+            .ReturnsAsync(It.IsAny<QueryResponse<TModelRoot>>())
             .Verifiable();
     }
 
-    protected virtual void AssertGetFilteredOnSuccess(QueryResponse<TModel> result)
+    protected virtual void AssertGetFilteredOnSuccess<TModelRoot>(QueryResponse<TModelRoot> result)
+        where TModelRoot : IModel<TId>
     {
         RepositoryMock.Verify(
             _ => _.GetAsync(It.IsAny<QueryRequest<TFiltering>>(), It.IsAny<CancellationToken>()),
