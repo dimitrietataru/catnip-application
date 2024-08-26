@@ -42,7 +42,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
         where TModelRoot : IModel<TId>
     {
         RepositoryMock.Verify(
-            _ => _.GetAsync(It.IsAny<QueryRequest<TFiltering>>(), It.IsAny<CancellationToken>()),
+            _ => _.GetAsync<TModelRoot>(It.IsAny<QueryRequest<TFiltering>>(), It.IsAny<CancellationToken>()),
             Times.Once);
         RepositoryMock.VerifyNoOtherCalls();
         RepositoryMock.VerifyAll();

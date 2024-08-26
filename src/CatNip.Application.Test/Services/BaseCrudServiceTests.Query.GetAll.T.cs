@@ -37,7 +37,9 @@ public abstract partial class BaseCrudServiceTests<TService, TRepository, TModel
     {
         result.Should().NotBeNull().And.BeAssignableTo<IEnumerable<TModelRoot>>();
 
-        RepositoryMock.Verify(_ => _.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
+        RepositoryMock.Verify(
+            _ => _.GetAllAsync<TModelRoot>(It.IsAny<CancellationToken>()),
+            Times.Once);
         RepositoryMock.VerifyNoOtherCalls();
         RepositoryMock.VerifyAll();
     }
