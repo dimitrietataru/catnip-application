@@ -14,21 +14,21 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
 {
-    public virtual async Task GivenGetFilteredWhenDataExistsThenReturnsData<TModelRoot>()
+    public virtual async Task GivenGetFilteredTWhenDataExistsThenReturnsData<TModelRoot>()
         where TModelRoot : IModel<TId>
     {
         // Arrange
-        ArrangeGetFilteredOnSuccess<TModelRoot>();
+        ArrangeGetFilteredTOnSuccess<TModelRoot>();
 
         // Act
         var result = await Service.GetAsync<TModelRoot>(
             It.IsAny<QueryRequest<TFiltering>>(), It.IsAny<CancellationToken>());
 
         // Assert
-        AssertGetFilteredOnSuccess(result);
+        AssertGetFilteredTOnSuccess(result);
     }
 
-    protected virtual void ArrangeGetFilteredOnSuccess<TModelRoot>()
+    protected virtual void ArrangeGetFilteredTOnSuccess<TModelRoot>()
         where TModelRoot : IModel<TId>
     {
         RepositoryMock
@@ -38,7 +38,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
             .Verifiable();
     }
 
-    protected virtual void AssertGetFilteredOnSuccess<TModelRoot>(QueryResponse<TModelRoot> result)
+    protected virtual void AssertGetFilteredTOnSuccess<TModelRoot>(QueryResponse<TModelRoot> result)
         where TModelRoot : IModel<TId>
     {
         RepositoryMock.Verify(

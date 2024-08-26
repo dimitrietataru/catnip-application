@@ -10,20 +10,20 @@ public abstract partial class BaseCrudServiceTests<TService, TRepository, TModel
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
 {
-    public virtual async Task GivenGetAllWhenDataExistsThenReturnsData<TModelRoot>()
+    public virtual async Task GivenGetAllTWhenDataExistsThenReturnsData<TModelRoot>()
         where TModelRoot : IModel
     {
         // Arrange
-        ArrangeGetAllOnSuccess<TModelRoot>();
+        ArrangeGetAllTOnSuccess<TModelRoot>();
 
         // Act
         var result = await Service.GetAllAsync<TModelRoot>(It.IsAny<CancellationToken>());
 
         // Assert
-        AssertGetAllOnSuccess(result);
+        AssertGetAllTOnSuccess(result);
     }
 
-    protected virtual void ArrangeGetAllOnSuccess<TModelRoot>()
+    protected virtual void ArrangeGetAllTOnSuccess<TModelRoot>()
         where TModelRoot : IModel
     {
         RepositoryMock
@@ -32,7 +32,7 @@ public abstract partial class BaseCrudServiceTests<TService, TRepository, TModel
             .Verifiable();
     }
 
-    protected virtual void AssertGetAllOnSuccess<TModelRoot>(IEnumerable<TModelRoot> result)
+    protected virtual void AssertGetAllTOnSuccess<TModelRoot>(IEnumerable<TModelRoot> result)
         where TModelRoot : IModel
     {
         result.Should().NotBeNull().And.BeAssignableTo<IEnumerable<TModelRoot>>();
