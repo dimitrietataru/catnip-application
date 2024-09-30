@@ -1,10 +1,12 @@
 using CatNip.Application.Services;
+using CatNip.Application.Test.Services.Abstractions;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Repositories;
 
 namespace CatNip.Application.Test.Services;
 
 public abstract partial class BaseCrudServiceTests<TService, TRepository, TModel, TId>
+    : ICrudServiceTests
     where TService : CrudService<TRepository, TModel, TId>
     where TRepository : class, ICrudRepository<TModel, TId>
     where TModel : IModel<TId>
