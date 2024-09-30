@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <IsTestProject>false</IsTestProject>
 
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
