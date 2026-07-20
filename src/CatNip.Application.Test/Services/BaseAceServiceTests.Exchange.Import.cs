@@ -1,4 +1,5 @@
 using CatNip.Application.Services;
+using CatNip.Domain.Exceptions;
 using CatNip.Domain.ImportExport;
 using CatNip.Domain.ImportExport.Csv;
 using CatNip.Domain.Models.Interfaces;
@@ -19,11 +20,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     public virtual async Task GivenImportWhenDataIsValidThenImportsData()
     {
         // Arrange
-        using var request = new ImportRequest
-        {
-            Stream = new MemoryStream(0),
-            FileName = "foo.csv"
-        };
+        using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
         ArrangeImportOnSuccess(request);
 
         // Act
@@ -36,11 +33,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     public virtual async Task GivenImportWhenFileParseFailsThenReturnsFailure()
     {
         // Arrange
-        using var request = new ImportRequest
-        {
-            Stream = new MemoryStream(0),
-            FileName = "foo.csv"
-        };
+        using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
         ArrangeImportOnFailureFileParse(request);
 
         // Act
@@ -50,14 +43,23 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
         AssertImportOnFailureFileParse(response);
     }
 
+    public virtual async Task GivenImportWhenCsvMapNotFoundThenReturnsFailure()
+    {
+        // Arrange
+        using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
+        ArrangeImportOnFailureCsvMapNotFound(request);
+
+        // Act
+        var response = await Service.ImportAsync(request, CancellationToken.None);
+
+        // Assert
+        AssertImportOnFailureCsvMapNotFound(response);
+    }
+
     public virtual async Task GivenImportWhenValidationFailsThenReturnsFailure()
     {
         // Arrange
-        using var request = new ImportRequest
-        {
-            Stream = new MemoryStream(0),
-            FileName = "foo.csv"
-        };
+        using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
         ArrangeImportOnFailureValidation(request);
 
         // Act
@@ -70,11 +72,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     public virtual async Task GivenImportWhenDataIntegrityFailsThenReturnsFailure()
     {
         // Arrange
-        using var request = new ImportRequest
-        {
-            Stream = new MemoryStream(0),
-            FileName = "foo.csv"
-        };
+        using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
         ArrangeImportOnFailureDataIntegrity(request);
 
         // Act
@@ -122,6 +120,32 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     }
 
     protected virtual void AssertImportOnFailureFileParse(ImportResponse importResponse)
+    {
+        importResponse.Should().NotBeNull().And.BeOfType<ImportResponse>();
+        importResponse.IsSuccessful.Should().BeFalse();
+        importResponse.Errors.Should().NotBeEmpty().And.HaveCount(1);
+        importResponse.Errors.First().Should().NotBeNull().And.BeOfType<ImportParseError>();
+
+        CsvConverterMock.Verify(
+            _ => _.ReadAsync<TExchange>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()), Times.Once);
+        CsvConverterMock.VerifyNoOtherCalls();
+        CsvConverterMock.VerifyAll();
+
+        RepositoryMock.Verify(
+            _ => _.ImportAsync(It.IsAny<ICollection<TExchange>>(), It.IsAny<CancellationToken>()), Times.Never);
+        RepositoryMock.VerifyNoOtherCalls();
+        RepositoryMock.VerifyAll();
+    }
+
+    protected virtual void ArrangeImportOnFailureCsvMapNotFound(ImportRequest request)
+    {
+        CsvConverterMock
+            .Setup(_ => _.ReadAsync<TExchange>(request.Stream, It.IsAny<CancellationToken>()))
+            .Throws<CsvMappingNotFoundException>()
+            .Verifiable();
+    }
+
+    protected virtual void AssertImportOnFailureCsvMapNotFound(ImportResponse importResponse)
     {
         importResponse.Should().NotBeNull().And.BeOfType<ImportResponse>();
         importResponse.IsSuccessful.Should().BeFalse();

@@ -1,3 +1,4 @@
+using CatNip.Domain.Exceptions;
 using CatNip.Domain.ImportExport;
 using CatNip.Domain.ImportExport.Csv;
 using CatNip.Domain.Models.Interfaces;
@@ -57,8 +58,13 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange
         {
             importRecords = await CsvConverter.ReadAsync<TExchange>(request.Stream, cancellation);
         }
+        catch (CsvMappingNotFoundException)
+        {
+            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' file. Unmapped data structure.");
+            return ImportResponse.Failure(failure);
+        }
 #pragma warning disable CA1031 // Do not catch general exception types
-        catch
+        catch (Exception)
 #pragma warning restore CA1031 // Do not catch general exception types
         {
             var failure = new ImportParseError($"Failed to read data from '{request.FileName}' file.");
