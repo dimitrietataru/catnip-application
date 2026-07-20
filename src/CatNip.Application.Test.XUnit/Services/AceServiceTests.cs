@@ -1,18 +1,20 @@
 using CatNip.Application.Services;
 using CatNip.Application.Test.Services;
+using CatNip.Domain.ImportExport.Csv;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Query.Filtering;
 using CatNip.Domain.Repositories;
 
 namespace CatNip.Application.Test.XUnit.Services;
 
-public abstract class AceServiceTests<TService, TRepository, TModel, TId, TFiltering>
-    : BaseAceServiceTests<TService, TRepository, TModel, TId, TFiltering>
-    where TService : AceService<TRepository, TModel, TId, TFiltering>
-    where TRepository : class, IAceRepository<TModel, TId, TFiltering>
+public abstract class AceServiceTests<TService, TRepository, TModel, TId, TFiltering, TExchange>
+    : BaseAceServiceTests<TService, TRepository, TModel, TId, TFiltering, TExchange>
+    where TService : AceService<TRepository, TModel, TId, TFiltering, TExchange>
+    where TRepository : class, IAceRepository<TModel, TId, TFiltering, TExchange>
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
+    where TExchange: ICsvMappable
 {
     [Fact]
     public override async Task GivenGetFilteredWhenDataExistsThenReturnsData()
@@ -90,5 +92,29 @@ public abstract class AceServiceTests<TService, TRepository, TModel, TId, TFilte
     public override async Task GivenDeleteWhenDataNotFoundThenThrowsException()
     {
         await base.GivenDeleteWhenDataNotFoundThenThrowsException();
+    }
+
+    [Fact]
+    public override async Task GivenImportWhenDataIsValidThenImportsData()
+    {
+        await base.GivenImportWhenDataIsValidThenImportsData();
+    }
+
+    [Fact]
+    public override async Task GivenImportWhenFileParseFailsThenReturnsFailure()
+    {
+        await base.GivenImportWhenFileParseFailsThenReturnsFailure();
+    }
+
+    [Fact]
+    public override async Task GivenImportWhenValidationFailsThenReturnsFailure()
+    {
+        await base.GivenImportWhenValidationFailsThenReturnsFailure();
+    }
+
+    [Fact]
+    public override async Task GivenImportWhenDataIntegrityFailsThenReturnsFailure()
+    {
+        await base.GivenImportWhenDataIntegrityFailsThenReturnsFailure();
     }
 }
