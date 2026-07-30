@@ -1,5 +1,6 @@
 using CatNip.Application.Services;
 using CatNip.Domain.ImportExport.Csv;
+using CatNip.Domain.ImportExport.Excel;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Query;
 using CatNip.Domain.Query.Filtering;
@@ -14,7 +15,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
-    where TExchange : ICsvMappable
+    where TExchange : ICsvMappable, IExcelMappable
 {
     public virtual async Task GivenGetFilteredWhenDataExistsThenReturnsData()
     {

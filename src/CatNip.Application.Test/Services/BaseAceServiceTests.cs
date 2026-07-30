@@ -1,6 +1,7 @@
 using CatNip.Application.Services;
 using CatNip.Application.Test.Services.Abstractions;
 using CatNip.Domain.ImportExport.Csv;
+using CatNip.Domain.ImportExport.Excel;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Query.Filtering;
 using CatNip.Domain.Repositories;
@@ -14,7 +15,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
-    where TExchange : ICsvMappable
+    where TExchange : ICsvMappable, IExcelMappable
 {
     protected abstract Mock<ICsvConverter> CsvConverterMock { get; }
 }

@@ -1,6 +1,7 @@
 using CatNip.Application.Services;
 using CatNip.Application.Test.Services;
 using CatNip.Domain.ImportExport.Csv;
+using CatNip.Domain.ImportExport.Excel;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Query.Filtering;
 using CatNip.Domain.Repositories;
@@ -14,7 +15,7 @@ public abstract class AceServiceTests<TService, TRepository, TModel, TId, TFilte
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
-    where TExchange: ICsvMappable
+    where TExchange : ICsvMappable, IExcelMappable
 {
     [Fact]
     public override async Task GivenGetFilteredWhenDataExistsThenReturnsData()
@@ -95,26 +96,32 @@ public abstract class AceServiceTests<TService, TRepository, TModel, TId, TFilte
     }
 
     [Fact]
-    public override async Task GivenImportWhenDataIsValidThenImportsData()
+    public override async Task GivenImportCsvWhenDataIsValidThenImportsData()
     {
-        await base.GivenImportWhenDataIsValidThenImportsData();
+        await base.GivenImportCsvWhenDataIsValidThenImportsData();
     }
 
     [Fact]
-    public override async Task GivenImportWhenFileParseFailsThenReturnsFailure()
+    public override async Task GivenImportCsvWhenFileParseFailsThenReturnsFailure()
     {
-        await base.GivenImportWhenFileParseFailsThenReturnsFailure();
+        await base.GivenImportCsvWhenFileParseFailsThenReturnsFailure();
     }
 
     [Fact]
-    public override async Task GivenImportWhenValidationFailsThenReturnsFailure()
+    public override async Task GivenImportCsvWhenCsvMapNotFoundThenReturnsFailure()
     {
-        await base.GivenImportWhenValidationFailsThenReturnsFailure();
+        await base.GivenImportCsvWhenCsvMapNotFoundThenReturnsFailure();
     }
 
     [Fact]
-    public override async Task GivenImportWhenDataIntegrityFailsThenReturnsFailure()
+    public override async Task GivenImportCsvWhenValidationFailsThenReturnsFailure()
     {
-        await base.GivenImportWhenDataIntegrityFailsThenReturnsFailure();
+        await base.GivenImportCsvWhenValidationFailsThenReturnsFailure();
+    }
+
+    [Fact]
+    public override async Task GivenImportCsvWhenDataIntegrityFailsThenReturnsFailure()
+    {
+        await base.GivenImportCsvWhenDataIntegrityFailsThenReturnsFailure();
     }
 }

@@ -2,6 +2,7 @@ using CatNip.Application.Services;
 using CatNip.Domain.Exceptions;
 using CatNip.Domain.ImportExport;
 using CatNip.Domain.ImportExport.Csv;
+using CatNip.Domain.ImportExport.Excel;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Query.Filtering;
 using CatNip.Domain.Repositories;
@@ -15,74 +16,74 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
-    where TExchange : ICsvMappable
+    where TExchange : ICsvMappable, IExcelMappable
 {
-    public virtual async Task GivenImportWhenDataIsValidThenImportsData()
+    public virtual async Task GivenImportCsvWhenDataIsValidThenImportsData()
     {
         // Arrange
         using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
-        ArrangeImportOnSuccess(request);
+        ArrangeImportCsvOnSuccess(request);
 
         // Act
-        var response = await Service.ImportAsync(request, CancellationToken.None);
+        var response = await Service.ImportCsvAsync(request, CancellationToken.None);
 
         // Assert
-        AssertImportOnSuccess(response);
+        AssertImportCsvOnSuccess(response);
     }
 
-    public virtual async Task GivenImportWhenFileParseFailsThenReturnsFailure()
+    public virtual async Task GivenImportCsvWhenFileParseFailsThenReturnsFailure()
     {
         // Arrange
         using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
-        ArrangeImportOnFailureFileParse(request);
+        ArrangeImportCsvOnFailureFileParse(request);
 
         // Act
-        var response = await Service.ImportAsync(request, CancellationToken.None);
+        var response = await Service.ImportCsvAsync(request, CancellationToken.None);
 
         // Assert
-        AssertImportOnFailureFileParse(response);
+        AssertImportCsvOnFailureFileParse(response);
     }
 
-    public virtual async Task GivenImportWhenCsvMapNotFoundThenReturnsFailure()
+    public virtual async Task GivenImportCsvWhenCsvMapNotFoundThenReturnsFailure()
     {
         // Arrange
         using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
-        ArrangeImportOnFailureCsvMapNotFound(request);
+        ArrangeImportCsvOnFailureCsvMapNotFound(request);
 
         // Act
-        var response = await Service.ImportAsync(request, CancellationToken.None);
+        var response = await Service.ImportCsvAsync(request, CancellationToken.None);
 
         // Assert
-        AssertImportOnFailureCsvMapNotFound(response);
+        AssertImportCsvOnFailureCsvMapNotFound(response);
     }
 
-    public virtual async Task GivenImportWhenValidationFailsThenReturnsFailure()
+    public virtual async Task GivenImportCsvWhenValidationFailsThenReturnsFailure()
     {
         // Arrange
         using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
-        ArrangeImportOnFailureValidation(request);
+        ArrangeImportCsvOnFailureValidation(request);
 
         // Act
-        var response = await Service.ImportAsync(request, CancellationToken.None);
+        var response = await Service.ImportCsvAsync(request, CancellationToken.None);
 
         // Assert
-        AssertImportOnFailureValidation(response);
+        AssertImportCsvOnFailureValidation(response);
     }
 
-    public virtual async Task GivenImportWhenDataIntegrityFailsThenReturnsFailure()
+    public virtual async Task GivenImportCsvWhenDataIntegrityFailsThenReturnsFailure()
     {
         // Arrange
         using var request = new ImportRequest(new MemoryStream(0), "foo.csv");
-        ArrangeImportOnFailureDataIntegrity(request);
+        ArrangeImportCsvOnFailureDataIntegrity(request);
 
         // Act
-        var response = await Service.ImportAsync(request, CancellationToken.None);
+        var response = await Service.ImportCsvAsync(request, CancellationToken.None);
 
         // Assert
-        AssertImportOnFailureDataIntegrity(response);
+        AssertImportCsvOnFailureDataIntegrity(response);
     }
 
-    protected virtual void ArrangeImportOnSuccess(ImportRequest request)
+    protected virtual void ArrangeImportCsvOnSuccess(ImportRequest request)
     {
         var response = ImportResponse.Success(totalRows: 2, createdRecords: 1, updatedRecords: 1);
 
@@ -95,7 +96,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
             .ReturnsAsync(response);
     }
 
-    protected virtual void AssertImportOnSuccess(ImportResponse response)
+    protected virtual void AssertImportCsvOnSuccess(ImportResponse response)
     {
         response.Should().NotBeNull().And.BeOfType<ImportResponse>();
         response.IsSuccessful.Should().BeTrue();
@@ -111,7 +112,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
         RepositoryMock.VerifyAll();
     }
 
-    protected virtual void ArrangeImportOnFailureFileParse(ImportRequest request)
+    protected virtual void ArrangeImportCsvOnFailureFileParse(ImportRequest request)
     {
         CsvConverterMock
             .Setup(_ => _.ReadAsync<TExchange>(request.Stream, It.IsAny<CancellationToken>()))
@@ -119,7 +120,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
             .Verifiable();
     }
 
-    protected virtual void AssertImportOnFailureFileParse(ImportResponse importResponse)
+    protected virtual void AssertImportCsvOnFailureFileParse(ImportResponse importResponse)
     {
         importResponse.Should().NotBeNull().And.BeOfType<ImportResponse>();
         importResponse.IsSuccessful.Should().BeFalse();
@@ -137,7 +138,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
         RepositoryMock.VerifyAll();
     }
 
-    protected virtual void ArrangeImportOnFailureCsvMapNotFound(ImportRequest request)
+    protected virtual void ArrangeImportCsvOnFailureCsvMapNotFound(ImportRequest request)
     {
         CsvConverterMock
             .Setup(_ => _.ReadAsync<TExchange>(request.Stream, It.IsAny<CancellationToken>()))
@@ -145,7 +146,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
             .Verifiable();
     }
 
-    protected virtual void AssertImportOnFailureCsvMapNotFound(ImportResponse importResponse)
+    protected virtual void AssertImportCsvOnFailureCsvMapNotFound(ImportResponse importResponse)
     {
         importResponse.Should().NotBeNull().And.BeOfType<ImportResponse>();
         importResponse.IsSuccessful.Should().BeFalse();
@@ -163,7 +164,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
         RepositoryMock.VerifyAll();
     }
 
-    protected virtual void ArrangeImportOnFailureValidation(ImportRequest request)
+    protected virtual void ArrangeImportCsvOnFailureValidation(ImportRequest request)
     {
         var response = ImportResponse.Failure(new ImportValidationError("Validation Error"));
 
@@ -176,7 +177,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
             .ReturnsAsync(response);
     }
 
-    protected virtual void AssertImportOnFailureValidation(ImportResponse response)
+    protected virtual void AssertImportCsvOnFailureValidation(ImportResponse response)
     {
         response.Should().NotBeNull().And.BeOfType<ImportResponse>();
         response.IsSuccessful.Should().BeFalse();
@@ -194,7 +195,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
         RepositoryMock.VerifyAll();
     }
 
-    protected virtual void ArrangeImportOnFailureDataIntegrity(ImportRequest request)
+    protected virtual void ArrangeImportCsvOnFailureDataIntegrity(ImportRequest request)
     {
         var response = ImportResponse.Failure(new ImportDataIntegrityError("Data Integrity Error"));
 
@@ -207,7 +208,7 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
             .ReturnsAsync(response);
     }
 
-    protected virtual void AssertImportOnFailureDataIntegrity(ImportResponse response)
+    protected virtual void AssertImportCsvOnFailureDataIntegrity(ImportResponse response)
     {
         response.Should().NotBeNull().And.BeOfType<ImportResponse>();
         response.IsSuccessful.Should().BeFalse();

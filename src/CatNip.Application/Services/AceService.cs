@@ -1,6 +1,7 @@
 using CatNip.Domain.Exceptions;
 using CatNip.Domain.ImportExport;
 using CatNip.Domain.ImportExport.Csv;
+using CatNip.Domain.ImportExport.Excel;
 using CatNip.Domain.Models.Interfaces;
 using CatNip.Domain.Query;
 using CatNip.Domain.Query.Filtering;
@@ -15,14 +16,16 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange
     where TModel : IModel<TId>
     where TId : IEquatable<TId>
     where TFiltering : IFilteringRequest
-    where TExchange : ICsvMappable
+    where TExchange : ICsvMappable, IExcelMappable
 {
     protected virtual ICsvConverter CsvConverter { get; init; }
+    protected virtual IExcelConverter ExcelConverter { get; init; }
 
-    protected AceService(TRepository repository, ICsvConverter csvConverter)
+    protected AceService(TRepository repository, ICsvConverter csvConverter, IExcelConverter excelConverter)
         : base(repository)
     {
         CsvConverter = csvConverter;
+        ExcelConverter = excelConverter;
     }
 
     public virtual async Task<QueryResponse<TModel>> GetAsync(
@@ -50,7 +53,8 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange
         return count;
     }
 
-    public virtual async Task<ImportResponse> ImportAsync(ImportRequest request, CancellationToken cancellation = default)
+    public virtual async Task<ImportResponse> ImportCsvAsync(
+        ImportRequest request, CancellationToken cancellation = default)
     {
         ICollection<TExchange> importRecords;
 
@@ -60,14 +64,39 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange
         }
         catch (CsvMappingNotFoundException)
         {
-            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' file. Unmapped data structure.");
+            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' csv file. Unmapped data structure.");
             return ImportResponse.Failure(failure);
         }
 #pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception)
 #pragma warning restore CA1031 // Do not catch general exception types
         {
-            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' file.");
+            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' csv file.");
+            return ImportResponse.Failure(failure);
+        }
+
+        return await Repository.ImportAsync(importRecords, cancellation);
+    }
+
+    public virtual async Task<ImportResponse> ImportExcelAsync(
+        ImportRequest request, CancellationToken cancellation = default)
+    {
+        ICollection<TExchange> importRecords;
+
+        try
+        {
+            importRecords = await ExcelConverter.ReadAsync<TExchange>(request.Stream, cancellation);
+        }
+        catch (ExcelMappingNotFoundException)
+        {
+            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' excel file. Unmapped data structure.");
+            return ImportResponse.Failure(failure);
+        }
+#pragma warning disable CA1031 // Do not catch general exception types
+        catch (Exception)
+#pragma warning restore CA1031 // Do not catch general exception types
+        {
+            var failure = new ImportParseError($"Failed to read data from '{request.FileName}' excel file.");
             return ImportResponse.Failure(failure);
         }
 
