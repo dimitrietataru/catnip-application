@@ -7,4 +7,10 @@ public interface IExchangeServiceTests
     Task GivenImportCsvWhenCsvMapNotFoundThenReturnsFailure();
     Task GivenImportCsvWhenValidationFailsThenReturnsFailure();
     Task GivenImportCsvWhenDataIntegrityFailsThenReturnsFailure();
+
+    Task GivenImportExcelWhenDataIsValidThenImportsData();
+    Task GivenImportExcelWhenFileParseFailsThenReturnsFailure();
+    Task GivenImportExcelWhenExcelMapNotFoundThenReturnsFailure();
+    Task GivenImportExcelWhenValidationFailsThenReturnsFailure();
+    Task GivenImportExcelWhenDataIntegrityFailsThenReturnsFailure();
 }

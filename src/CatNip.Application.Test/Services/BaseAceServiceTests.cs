@@ -18,4 +18,5 @@ public abstract partial class BaseAceServiceTests<TService, TRepository, TModel,
     where TExchange : ICsvMappable, IExcelMappable
 {
     protected abstract Mock<ICsvConverter> CsvConverterMock { get; }
+    protected abstract Mock<IExcelConverter> ExcelConverterMock { get; }
 }

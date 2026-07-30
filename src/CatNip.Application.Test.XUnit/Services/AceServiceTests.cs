@@ -124,4 +124,34 @@ public abstract class AceServiceTests<TService, TRepository, TModel, TId, TFilte
     {
         await base.GivenImportCsvWhenDataIntegrityFailsThenReturnsFailure();
     }
+
+    [Fact]
+    public override async Task GivenImportExcelWhenDataIsValidThenImportsData()
+    {
+        await base.GivenImportExcelWhenDataIsValidThenImportsData();
+    }
+
+    [Fact]
+    public override async Task GivenImportExcelWhenFileParseFailsThenReturnsFailure()
+    {
+        await base.GivenImportExcelWhenFileParseFailsThenReturnsFailure();
+    }
+
+    [Fact]
+    public override async Task GivenImportExcelWhenExcelMapNotFoundThenReturnsFailure()
+    {
+        await base.GivenImportExcelWhenExcelMapNotFoundThenReturnsFailure();
+    }
+
+    [Fact]
+    public override async Task GivenImportExcelWhenValidationFailsThenReturnsFailure()
+    {
+        await base.GivenImportExcelWhenValidationFailsThenReturnsFailure();
+    }
+
+    [Fact]
+    public override async Task GivenImportExcelWhenDataIntegrityFailsThenReturnsFailure()
+    {
+        await base.GivenImportExcelWhenDataIntegrityFailsThenReturnsFailure();
+    }
 }
