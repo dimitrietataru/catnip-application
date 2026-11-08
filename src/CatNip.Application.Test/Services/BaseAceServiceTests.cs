@@ -1,5 +1,4 @@
 using CatNip.Application.Services;
-using CatNip.Application.Test.Services.Abstractions;
 using CatNip.Domain.ImportExport.Csv;
 using CatNip.Domain.ImportExport.Excel;
 using CatNip.Domain.Models.Interfaces;
@@ -9,7 +8,7 @@ using CatNip.Domain.Repositories;
 namespace CatNip.Application.Test.Services;
 
 public abstract partial class BaseAceServiceTests<TService, TRepository, TModel, TId, TFiltering, TExchange>
-    : BaseCrudServiceTests<TService, TRepository, TModel, TId>, IAceServiceTests
+    : BaseCrudServiceTests<TService, TRepository, TModel, TId>
     where TService : AceService<TRepository, TModel, TId, TFiltering, TExchange>
     where TRepository : class, IAceRepository<TModel, TId, TFiltering, TExchange>
     where TModel : IModel<TId>
