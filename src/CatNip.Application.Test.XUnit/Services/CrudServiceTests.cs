@@ -9,7 +9,7 @@ public abstract class CrudServiceTests<TService, TRepository, TModel, TId>
     : BaseCrudServiceTests<TService, TRepository, TModel, TId>
     where TService : CrudService<TRepository, TModel, TId>
     where TRepository : class, ICrudRepository<TModel, TId>
-    where TModel : IModel<TId>
+    where TModel : ICrudModel<TId>
     where TId : IEquatable<TId>
 {
     [Fact]
@@ -22,30 +22,6 @@ public abstract class CrudServiceTests<TService, TRepository, TModel, TId>
     public override async Task GivenCountWhenDataExistsThenReturnsCount()
     {
         await base.GivenCountWhenDataExistsThenReturnsCount();
-    }
-
-    [Fact]
-    public override async Task GivenGetByIdWhenDataExistsThenReturnsData()
-    {
-        await base.GivenGetByIdWhenDataExistsThenReturnsData();
-    }
-
-    [Fact]
-    public override async Task GivenGetByIdWhenDataNotFoundThenThrowsException()
-    {
-        await base.GivenGetByIdWhenDataNotFoundThenThrowsException();
-    }
-
-    [Fact]
-    public override async Task GivenExistsWhenDataExistsThenReturnsTrue()
-    {
-        await base.GivenExistsWhenDataExistsThenReturnsTrue();
-    }
-
-    [Fact]
-    public override async Task GivenExistsWhenDataNotFoundThenReturnsFalse()
-    {
-        await base.GivenExistsWhenDataNotFoundThenReturnsFalse();
     }
 
     [Fact]
@@ -76,5 +52,53 @@ public abstract class CrudServiceTests<TService, TRepository, TModel, TId>
     public override async Task GivenDeleteWhenDataNotFoundThenThrowsException()
     {
         await base.GivenDeleteWhenDataNotFoundThenThrowsException();
+    }
+
+    [Fact]
+    public override async Task GivenGetByIdWhenDataExistsThenReturnsData()
+    {
+        await base.GivenGetByIdWhenDataExistsThenReturnsData();
+    }
+
+    [Fact]
+    public override async Task GivenGetByIdWhenDataNotFoundThenThrowsException()
+    {
+        await base.GivenGetByIdWhenDataNotFoundThenThrowsException();
+    }
+
+    [Fact]
+    public override async Task GivenExistsWhenDataExistsThenReturnsTrue()
+    {
+        await base.GivenExistsWhenDataExistsThenReturnsTrue();
+    }
+
+    [Fact]
+    public override async Task GivenExistsWhenDataNotFoundThenReturnsFalse()
+    {
+        await base.GivenExistsWhenDataNotFoundThenReturnsFalse();
+    }
+
+    [Fact]
+    public override async Task GivenUpdateByIdWhenDataExistsThenUpdatesData()
+    {
+        await base.GivenUpdateByIdWhenDataExistsThenUpdatesData();
+    }
+
+    [Fact]
+    public override async Task GivenUpdateByIdWhenDataNotFoundThenThrowsException()
+    {
+        await base.GivenUpdateByIdWhenDataNotFoundThenThrowsException();
+    }
+
+    [Fact]
+    public override async Task GivenDeleteByIdWhenDataExistsThenDeletesData()
+    {
+        await base.GivenDeleteByIdWhenDataExistsThenDeletesData();
+    }
+
+    [Fact]
+    public override async Task GivenDeleteByIdWhenDataNotFoundThenThrowsException()
+    {
+        await base.GivenDeleteByIdWhenDataNotFoundThenThrowsException();
     }
 }

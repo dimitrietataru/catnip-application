@@ -10,17 +10,31 @@ using CatNip.Domain.Services;
 
 namespace CatNip.Application.Services;
 
-public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange>
-    : CrudService<TRepository, TModel, TId>, IAceService<TModel, TId, TFiltering, TExchange>
-    where TRepository : IAceRepository<TModel, TId, TFiltering, TExchange>
-    where TModel : IModel<TId>
+public abstract class AceService<TRepository, TModel, TId, TModelRoot, TFiltering, TExchange>
+    : AceService<TRepository, TModel, TId, TId, TModelRoot, TFiltering, TExchange>, IAceService<TModel, TId, TModelRoot, TFiltering, TExchange>
+    where TRepository : IAceRepository<TModel, TId, TModelRoot, TFiltering, TExchange>
+    where TModel : IAceModel<TId>
     where TId : IEquatable<TId>
+    where TModelRoot : ICrudModel<TId>
     where TFiltering : IFilteringRequest
     where TExchange : ICsvMappable, IExcelMappable
 {
-    protected virtual ICsvConverter CsvConverter { get; init; }
-    protected virtual IExcelConverter ExcelConverter { get; init; }
+    protected AceService(TRepository repository, ICsvConverter csvConverter, IExcelConverter excelConverter)
+        : base(repository, csvConverter, excelConverter)
+    {
+    }
+}
 
+public abstract class AceService<TRepository, TModel, TId, TTraceId, TModelRoot, TFiltering, TExchange>
+    : CrudService<TRepository, TModel, TId>, IAceService<TModel, TId, TTraceId, TModelRoot, TFiltering, TExchange>
+    where TRepository : IAceRepository<TModel, TId, TTraceId, TModelRoot, TFiltering, TExchange>
+    where TModel : IAceModel<TId, TTraceId>
+    where TId : IEquatable<TId>
+    where TTraceId : IEquatable<TTraceId>
+    where TModelRoot : ICrudModel<TId>
+    where TFiltering : IFilteringRequest
+    where TExchange : ICsvMappable, IExcelMappable
+{
     protected AceService(TRepository repository, ICsvConverter csvConverter, IExcelConverter excelConverter)
         : base(repository)
     {
@@ -28,7 +42,10 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange
         ExcelConverter = excelConverter;
     }
 
-    public virtual async Task<QueryResponse<TModel>> GetAsync(
+    protected virtual ICsvConverter CsvConverter { get; init; }
+    protected virtual IExcelConverter ExcelConverter { get; init; }
+
+    public virtual async Task<QueryResponse<TModelRoot>> GetAsync(
         QueryRequest<TFiltering> request, CancellationToken cancellation = default)
     {
         var result = await Repository.GetAsync(request, cancellation);
@@ -36,21 +53,18 @@ public abstract class AceService<TRepository, TModel, TId, TFiltering, TExchange
         return result;
     }
 
-    public virtual async Task<QueryResponse<TModelRoot>> GetAsync<TModelRoot>(
-        QueryRequest<TFiltering> request, CancellationToken cancellation = default)
-        where TModelRoot : IModel<TId>
-    {
-        var result = await Repository.GetAsync<TModelRoot>(request, cancellation);
-
-        return result;
-    }
-
-    public virtual async Task<int> CountAsync(
-        TFiltering filter, CancellationToken cancellation = default)
+    public virtual async Task<int> CountAsync(TFiltering filter, CancellationToken cancellation = default)
     {
         int count = await Repository.CountAsync(filter, cancellation);
 
         return count;
+    }
+
+    public virtual async Task<bool> ExistsAsync(TFiltering filter, CancellationToken cancellation = default)
+    {
+        bool exists = await Repository.ExistsAsync(filter, cancellation);
+
+        return exists;
     }
 
     public virtual async Task<ImportResponse> ImportCsvAsync(
